@@ -1,0 +1,48 @@
+﻿@page
+@model HotelManager.Pages.ErrorModel
+
+@{
+    ViewData["Title"] = "A apărut o problemă";
+}
+
+<div class="state-layout">
+    <section class="state-card">
+        <span class="eyebrow">O MICĂ ÎNTRERUPERE</span>
+
+        <h1>Ceva nu a mers.</h1>
+
+        <p class="lead-copy">
+            Cererea nu a putut fi procesată.
+            Revino la pagina principală și încearcă din nou.
+        </p>
+
+        <div class="state-actions">
+            <a class="btn btn-primary" asp-page="/Index">
+                Pagina principală
+            </a>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Reservations/Index">
+                    Rezervări
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Auth/Login">
+                    Autentificare
+                </a>
+            }
+        </div>
+
+        @if (Model.ShowRequestId)
+        {
+            <p class="request-id">
+                Identificator cerere:
+                <code>@Model.RequestId</code>
+            </p>
+        }
+    </section>
+</div>

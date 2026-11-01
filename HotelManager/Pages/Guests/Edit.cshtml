@@ -1,0 +1,103 @@
+@page "{id:int}"
+@model HotelManager.Pages.Guests.EditModel
+
+@{
+    ViewData["Title"] = "Editează oaspetele";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">OASPEȚI</span>
+        <h1>Actualizează profilul.</h1>
+
+        <p class="lead-copy">
+            După schimbarea datelor, oaspetele se va autentifica din nou.
+        </p>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="./Index">
+            ← Lista oaspeților
+        </a>
+
+        <a class="btn btn-primary"
+           asp-page="/Reservations/Create"
+           asp-route-guestId="@Model.GuestId">
+            Rezervare pentru oaspete
+        </a>
+    </div>
+</div>
+
+<section class="panel form-panel">
+    <form method="post"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <input asp-for="Input.SecurityStamp" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly"
+             role="alert"></div>
+
+        <div class="form-row">
+            <div class="field">
+                <label asp-for="Input.FirstName"
+                       class="form-label"></label>
+
+                <input asp-for="Input.FirstName"
+                       class="form-control"
+                       maxlength="50"
+                       required />
+
+                <span asp-validation-for="Input.FirstName"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.LastName"
+                       class="form-label"></label>
+
+                <input asp-for="Input.LastName"
+                       class="form-control"
+                       maxlength="50"
+                       required />
+
+                <span asp-validation-for="Input.LastName"></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Email"
+                   class="form-label"></label>
+
+            <input asp-for="Input.Email"
+                   class="form-control"
+                   maxlength="254"
+                   required />
+
+            <span asp-validation-for="Input.Email"></span>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn btn-primary"
+                    type="submit"
+                    data-submit-button>
+                Salvează modificările
+                <span class="button-spinner" aria-hidden="true"></span>
+            </button>
+
+            <a class="btn btn-ghost" asp-page="./Index">
+                Renunță
+            </a>
+
+            <a class="btn btn-outline-danger"
+               asp-page="./Delete"
+               asp-route-id="@Model.GuestId">
+                Șterge contul
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

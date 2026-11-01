@@ -1,0 +1,92 @@
+@page
+@model HotelManager.Pages.Auth.LoginModel
+
+@{
+    ViewData["Title"] = "Autentificare";
+}
+
+<div class="auth-layout">
+    <section class="auth-card">
+        <a class="back-link" asp-page="/Index">
+            ← Înapoi acasă
+        </a>
+
+        <span class="eyebrow">CONTUL TĂU</span>
+        <h1>Bine ai revenit.</h1>
+
+        <p class="auth-intro">
+            Introdu datele contului pentru a continua.
+        </p>
+
+        <form method="post"
+              asp-antiforgery="true"
+              data-submit-form>
+
+            <input asp-for="ReturnUrl" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 role="alert"></div>
+
+            <div class="field">
+                <label asp-for="Input.Email"
+                       class="form-label"></label>
+
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       autocomplete="username"
+                       autocapitalize="none"
+                       spellcheck="false"
+                       maxlength="254"
+                       required />
+
+                <span asp-validation-for="Input.Email"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.Password"
+                       class="form-label"></label>
+
+                <div class="password-field">
+                    <input asp-for="Input.Password"
+                           class="form-control"
+                           autocomplete="current-password"
+                           maxlength="128"
+                           required />
+
+                    <button class="password-toggle"
+                            type="button"
+                            hidden
+                            data-toggle-password="Input_Password"
+                            aria-controls="Input_Password"
+                            aria-label="Arată parola"
+                            aria-pressed="false">
+                        <span data-password-label>Arată</span>
+                    </button>
+                </div>
+
+                <span asp-validation-for="Input.Password"></span>
+            </div>
+
+            <button class="btn btn-primary w-100"
+                    type="submit"
+                    data-submit-button>
+                Intră în cont
+                <span class="button-spinner" aria-hidden="true"></span>
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            Nu ai cont?
+
+            <a asp-page="/Auth/Register"
+               asp-route-returnUrl="@Model.ReturnUrl">
+                Creează un cont
+            </a>
+        </p>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

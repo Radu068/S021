@@ -1,0 +1,133 @@
+@page
+@model HotelManager.Pages.Reservations.CreateModel
+
+@{
+    ViewData["Title"] = "Rezervare nouă";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">REZERVĂRI</span>
+        <h1>Un sejur nou.</h1>
+
+        <p class="lead-copy">
+            Alege camera și perioada șederii.
+        </p>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="/Rooms/Index">
+            ← Alege o cameră
+        </a>
+
+        <a class="btn btn-ghost" asp-page="./Index">
+            Lista rezervărilor
+        </a>
+    </div>
+</div>
+
+<section class="panel form-panel">
+    <form method="post"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <div asp-validation-summary="ModelOnly"
+             role="alert"></div>
+
+        @if (Model.IsReceptionist)
+        {
+            <div class="field">
+                <label asp-for="Input.GuestId"
+                       class="form-label"></label>
+
+                <select asp-for="Input.GuestId"
+                        asp-items="Model.GuestOptions"
+                        class="form-select"
+                        required>
+                    <option value="">Selectează oaspetele</option>
+                </select>
+
+                <span asp-validation-for="Input.GuestId"></span>
+
+                <a class="inline-link" asp-page="/Guests/Create">
+                    Adaugă un oaspete nou →
+                </a>
+            </div>
+        }
+
+        <div class="field">
+            <label asp-for="Input.RoomId"
+                   class="form-label"></label>
+
+            <select asp-for="Input.RoomId"
+                    asp-items="Model.RoomOptions"
+                    class="form-select"
+                    required>
+                <option value="">Selectează camera</option>
+            </select>
+
+            <span asp-validation-for="Input.RoomId"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="field">
+                <label asp-for="Input.CheckIn"
+                       class="form-label"></label>
+
+                <input asp-for="Input.CheckIn"
+                       asp-format="{0:yyyy-MM-dd}"
+                       class="form-control"
+                       min="@(HotelClock.Today.ToString("yyyy-MM-dd"))"
+                       required />
+
+                <span asp-validation-for="Input.CheckIn"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.CheckOut"
+                       class="form-label"></label>
+
+                <input asp-for="Input.CheckOut"
+                       asp-format="{0:yyyy-MM-dd}"
+                       class="form-control"
+                       min="@(HotelClock.Today.AddDays(1).ToString("yyyy-MM-dd"))"
+                       required />
+
+                <span asp-validation-for="Input.CheckOut"></span>
+            </div>
+        </div>
+
+        <p class="form-text">
+            Disponibilitatea camerei este verificată la salvare.
+        </p>
+
+        <div class="profile-actions">
+            <button class="btn btn-primary"
+                    type="submit"
+                    data-submit-button>
+                Creează rezervarea
+
+                <span class="button-spinner"
+                      aria-hidden="true"></span>
+            </button>
+
+            <a class="btn btn-ghost" asp-page="./Index">
+                Renunță
+            </a>
+
+            @if (Model.IsReceptionist)
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Reception/Index"
+                   asp-fragment="camere-disponibile">
+                    Camere disponibile
+                </a>
+            }
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

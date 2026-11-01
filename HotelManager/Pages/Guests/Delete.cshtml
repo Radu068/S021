@@ -1,0 +1,52 @@
+﻿@page "{id:int}"
+@model HotelManager.Pages.Guests.DeleteModel
+
+@{
+    ViewData["Title"] = "Șterge oaspetele";
+}
+
+<div class="state-layout">
+    <section class="state-card">
+        <span class="eyebrow">CONFIRMARE</span>
+
+        <h1>Ștergi acest cont?</h1>
+
+        <p class="lead-copy">
+            @Model.Item.GetFullName()<br />
+            @Model.Item.Email
+        </p>
+
+        <p class="micro-copy">
+            Conturile cu rezervări în istoric sunt păstrate.
+        </p>
+
+        <form method="post"
+              asp-antiforgery="true"
+              data-submit-form>
+
+            <input asp-for="Stamp" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 role="alert"></div>
+
+            <div class="state-actions">
+                <button class="btn btn-danger"
+                        type="submit"
+                        data-submit-button>
+                    Șterge contul
+                    <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+
+                <a class="btn btn-ghost" asp-page="./Index">
+                    Renunță
+                </a>
+
+                <a class="btn btn-ghost"
+                   asp-page="./Edit"
+                   asp-route-id="@Model.Item.UserId">
+                    Înapoi la oaspete
+                </a>
+            </div>
+        </form>
+    </section>
+</div>

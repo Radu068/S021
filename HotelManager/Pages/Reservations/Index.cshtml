@@ -1,0 +1,118 @@
+@page
+@model HotelManager.Pages.Reservations.IndexModel
+
+@{
+    ViewData["Title"] = "Rezervări";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">SEJURURI</span>
+
+        <h1>
+            @(Model.IsReceptionist
+                ? "Toate rezervările."
+                : "Rezervările mele.")
+        </h1>
+
+        <p class="lead-copy">
+            Camerele, perioadele și istoricul rezervărilor.
+        </p>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="/Index">
+            ← Acasă
+        </a>
+
+        <a class="btn btn-primary" asp-page="./Create">
+            Rezervare nouă
+        </a>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Rezervare</th>
+                    <th scope="col">Oaspete</th>
+                    <th scope="col">Cameră</th>
+                    <th scope="col">Perioadă</th>
+                    <th scope="col">Stare</th>
+                    <th scope="col" class="text-end">Acțiuni</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    var canEdit =
+                        item.Status == ReservationStatus.Reserved
+                        && (Model.IsReceptionist
+                            || item.CheckIn >= HotelClock.Today);
+
+                    <tr>
+                        <td>#@item.ReservationId</td>
+
+                        <td>
+                            @if (Model.IsReceptionist)
+                            {
+                                <a asp-page="/Guests/Edit"
+                                   asp-route-id="@item.GuestId">
+                                    @item.Guest.GetFullName()
+                                </a>
+                            }
+                            else
+                            {
+                                @item.Guest.GetFullName()
+                            }
+                        </td>
+
+                        <td>@item.Room.RoomNumber</td>
+
+                        <td class="date-cell">
+                            @item.CheckIn.ToString("dd.MM.yyyy")<br />
+                            @item.CheckOut.ToString("dd.MM.yyyy")
+                        </td>
+
+                        <td>
+                            <span class="reservation-status status-@((int)item.Status)">
+                                @item.Status.GetLabel()
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="row-actions">
+                                <a class="btn btn-ghost"
+                                   asp-page="./Details"
+                                   asp-route-id="@item.ReservationId">
+                                    Detalii
+                                </a>
+
+                                @if (canEdit)
+                                {
+                                    <a class="btn btn-ghost"
+                                       asp-page="./Edit"
+                                       asp-route-id="@item.ReservationId">
+                                        Editează
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            Nu există rezervări de afișat.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

@@ -1,0 +1,44 @@
+@page
+@model HotelManager.Pages.Auth.AccessDeniedModel
+
+@{
+    ViewData["Title"] = "Acces interzis";
+}
+
+<div class="state-layout">
+    <section class="state-card">
+        <span class="eyebrow">ACCES RESTRICȚIONAT / 403</span>
+
+        <h1>Un spațiu rezervat.</h1>
+
+        <p class="lead-copy">
+            Contul tău nu are permisiunea necesară pentru această pagină.
+        </p>
+
+        <div class="state-actions">
+            <a class="btn btn-primary" asp-page="/Index">
+                Pagina principală
+            </a>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Reservations/Index">
+                    Rezervările mele
+                </a>
+
+                <a class="btn btn-ghost"
+                   asp-page="/Profile/ViewProfile">
+                    Profilul meu
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Auth/Login">
+                    Autentificare
+                </a>
+            }
+        </div>
+    </section>
+</div>

@@ -1,0 +1,197 @@
+@page "{id:int}"
+@model HotelManager.Pages.Rooms.EditModel
+
+@{
+    ViewData["Title"] = "Editează camera";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">CAMERE</span>
+        <h1>Camera @Model.Item.RoomNumber</h1>
+        <p class="lead-copy">@Model.Item.Hotel.Name</p>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="./Index">
+            ← Lista camerelor
+        </a>
+
+        <a class="btn btn-primary"
+           asp-page="/Reservations/Create"
+           asp-route-roomId="@Model.Item.RoomId">
+            Rezervă această cameră
+        </a>
+    </div>
+</div>
+
+<section class="panel form-panel">
+    <h2>Detaliile camerei</h2>
+
+    <div asp-validation-summary="ModelOnly"
+         role="alert"></div>
+
+    <form method="post"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <input asp-for="Input.HotelId" type="hidden" />
+        <input asp-for="Input.Version" type="hidden" />
+
+        <div class="form-row">
+            <div class="field">
+                <label asp-for="Input.RoomNumber"
+                       class="form-label"></label>
+
+                <input asp-for="Input.RoomNumber"
+                       class="form-control"
+                       min="1"
+                       step="1"
+                       required />
+
+                <span asp-validation-for="Input.RoomNumber"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.NumberOfBeds"
+                       class="form-label"></label>
+
+                <input asp-for="Input.NumberOfBeds"
+                       class="form-control"
+                       min="1"
+                       max="8"
+                       step="1"
+                       required />
+
+                <span asp-validation-for="Input.NumberOfBeds"></span>
+            </div>
+        </div>
+
+        <div class="form-check">
+            <input asp-for="Input.IsApartment"
+                   class="form-check-input" />
+
+            <label asp-for="Input.IsApartment"
+                   class="form-check-label"></label>
+        </div>
+
+        <p class="form-text mt-3">
+            Datele camerei pot fi schimbate când nu există
+            rezervări neîncheiate.
+        </p>
+
+        <div class="field">
+            <label asp-for="Input.PricePerNight"
+                   class="form-label"></label>
+
+            <input asp-for="Input.PricePerNight"
+                   type="number"
+                   class="form-control"
+                   min="0.01"
+                   max="99999.99"
+                   step="0.01"
+                   required />
+
+            <span asp-validation-for="Input.PricePerNight"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Description"
+                   class="form-label"></label>
+
+            <textarea asp-for="Input.Description"
+                      class="form-control"
+                      rows="4"
+                      maxlength="2000"></textarea>
+
+            <span asp-validation-for="Input.Description"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.ImagePath"
+                   class="form-label"></label>
+
+            <input asp-for="Input.ImagePath"
+                   class="form-control"
+                   placeholder="/images/rooms/camera-101.jpg"
+                   maxlength="240" />
+
+            <p class="micro-copy">
+                Salvează fotografia în wwwroot/images/rooms și scrie aici
+                calea de forma /images/rooms/camera-101.jpg.
+            </p>
+
+            <span asp-validation-for="Input.ImagePath"></span>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn btn-primary"
+                    type="submit"
+                    data-submit-button>
+                Salvează modificările
+
+                <span class="button-spinner"
+                      aria-hidden="true"></span>
+            </button>
+
+            <a class="btn btn-ghost" asp-page="./Index">
+                Renunță
+            </a>
+
+            <a class="btn btn-ghost"
+               asp-page="./Edit"
+               asp-route-id="@Model.Item.RoomId">
+                Reîncarcă
+            </a>
+        </div>
+    </form>
+</section>
+
+<section class="panel form-panel mt-4">
+    <h2>Șterge camera</h2>
+
+    <p class="micro-copy">
+        O cameră poate fi ștearsă doar dacă nu are rezervări în istoric.
+    </p>
+
+    <form method="post"
+          asp-page-handler="Delete"
+          asp-route-id="@Model.Item.RoomId"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <input type="hidden"
+               name="version"
+               value="@Model.Item.GetVersion()" />
+
+        <div class="form-check">
+            <input id="confirm-room-delete"
+                   type="checkbox"
+                   name="confirmDelete"
+                   value="true"
+                   class="form-check-input"
+                   required />
+
+            <label for="confirm-room-delete"
+                   class="form-check-label">
+                Confirm ștergerea acestei camere.
+            </label>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn btn-danger"
+                    type="submit"
+                    data-submit-button>
+                Șterge camera
+
+                <span class="button-spinner"
+                      aria-hidden="true"></span>
+            </button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

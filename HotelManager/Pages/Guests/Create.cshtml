@@ -1,0 +1,119 @@
+@page
+@model HotelManager.Pages.Guests.CreateModel
+
+@{
+    ViewData["Title"] = "Oaspete nou";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">OASPEȚI</span>
+        <h1>Un oaspete nou.</h1>
+
+        <p class="lead-copy">
+            Creează contul clientului folosind datele sale de contact.
+        </p>
+    </div>
+
+    <a class="btn btn-ghost" asp-page="./Index">
+        ← Lista oaspeților
+    </a>
+</div>
+
+<section class="panel form-panel">
+    <form method="post"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <div asp-validation-summary="ModelOnly"
+             role="alert"></div>
+
+        <div class="form-row">
+            <div class="field">
+                <label asp-for="Input.FirstName"
+                       class="form-label"></label>
+
+                <input asp-for="Input.FirstName"
+                       class="form-control"
+                       autocomplete="given-name"
+                       maxlength="50"
+                       required />
+
+                <span asp-validation-for="Input.FirstName"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.LastName"
+                       class="form-label"></label>
+
+                <input asp-for="Input.LastName"
+                       class="form-control"
+                       autocomplete="family-name"
+                       maxlength="50"
+                       required />
+
+                <span asp-validation-for="Input.LastName"></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Email"
+                   class="form-label"></label>
+
+            <input asp-for="Input.Email"
+                   class="form-control"
+                   autocomplete="email"
+                   maxlength="254"
+                   required />
+
+            <span asp-validation-for="Input.Email"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Password"
+                   class="form-label"></label>
+
+            <input asp-for="Input.Password"
+                   class="form-control"
+                   autocomplete="new-password"
+                   minlength="15"
+                   maxlength="128"
+                   required />
+
+            <p class="form-text">Între 15 și 128 de caractere.</p>
+
+            <span asp-validation-for="Input.Password"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.ConfirmPassword"
+                   class="form-label"></label>
+
+            <input asp-for="Input.ConfirmPassword"
+                   class="form-control"
+                   autocomplete="new-password"
+                   maxlength="128"
+                   required />
+
+            <span asp-validation-for="Input.ConfirmPassword"></span>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn btn-primary"
+                    type="submit"
+                    data-submit-button>
+                Creează contul
+                <span class="button-spinner" aria-hidden="true"></span>
+            </button>
+
+            <a class="btn btn-ghost" asp-page="./Index">
+                Renunță
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

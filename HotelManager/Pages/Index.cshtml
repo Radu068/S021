@@ -1,0 +1,139 @@
+﻿@page
+@model HotelManager.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Acasă";
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var staff = signedIn && User.IsInRole(nameof(Receptionist));
+}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">HOTELMANAGER</span>
+
+        <h1>
+            Mai puține griji.<br />
+            <span class="text-soft">Mai multă ospitalitate.</span>
+        </h1>
+
+        <p class="lead-copy">
+            Camere, oaspeți și rezervări, într-un singur loc.
+            Tot ce ai nevoie pentru un sejur bine organizat.
+        </p>
+
+        <div class="hero-actions">
+            @if (signedIn)
+            {
+                <a class="btn btn-primary"
+                   asp-page="/Reservations/Create">
+                    Rezervare nouă &rarr;
+                </a>
+
+                <a class="btn btn-ghost"
+                   asp-page="/Reservations/Index">
+                    Vezi rezervările
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary"
+                   asp-page="/Auth/Register">
+                    Creează un cont &rarr;
+                </a>
+
+                <a class="btn btn-ghost"
+                   asp-page="/Auth/Login">
+                    Autentificare
+                </a>
+            }
+        </div>
+    </div>
+
+    <aside class="panel home-overview">
+        <span class="eyebrow">LA ÎNDEMÂNĂ</span>
+
+        <h2>De unde începem?</h2>
+
+        <p class="micro-copy">
+            Alege ce vrei să faci în continuare.
+        </p>
+
+        @if (staff)
+        {
+            <a class="overview-link" asp-page="/Reception/Index">
+                <span>
+                    <strong>Recepție</strong>
+                    <small>Sosiri, plecări și disponibilitate</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+
+            <a class="overview-link" asp-page="/Guests/Index">
+                <span>
+                    <strong>Oaspeți</strong>
+                    <small>Conturi și date de contact</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+        }
+
+        @if (signedIn)
+        {
+            <a class="overview-link" asp-page="/Reservations/Index">
+                <span>
+                    <strong>Rezervări</strong>
+                    <small>Sejururi și istoricul lor</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+
+            <a class="overview-link" asp-page="/Profile/ViewProfile">
+                <span>
+                    <strong>Profilul meu</strong>
+                    <small>Detaliile contului tău</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+        }
+        else
+        {
+            <a class="overview-link"
+               asp-page="/Auth/Login"
+               asp-route-returnUrl="/Reservations/Create">
+                <span>
+                    <strong>Pregătește un sejur</strong>
+                    <small>Autentifică-te pentru a rezerva</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+
+            <a class="overview-link" asp-page="/Auth/Register">
+                <span>
+                    <strong>Primul tău cont</strong>
+                    <small>Începe cu câteva date simple</small>
+                </span>
+                <span aria-hidden="true">&nearr;</span>
+            </a>
+        }
+    </aside>
+</section>
+
+<section class="feature-strip" aria-label="Ce poți face">
+    <article class="feature">
+        <span class="eyebrow">01 / ALEGE</span>
+        <h2>Perioada potrivită</h2>
+        <p>Alege camera și datele pentru următorul sejur.</p>
+    </article>
+
+    <article class="feature">
+        <span class="eyebrow">02 / ORGANIZEAZĂ</span>
+        <h2>Rezervări la îndemână</h2>
+        <p>Consultă detaliile și actualizează rezervările neîncepute.</p>
+    </article>
+
+    <article class="feature">
+        <span class="eyebrow">03 / REVINO</span>
+        <h2>Un spațiu al tău</h2>
+        <p>Profilul și rezervările sunt accesibile din meniul principal.</p>
+    </article>
+</section>

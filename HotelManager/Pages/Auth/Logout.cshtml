@@ -1,0 +1,37 @@
+@page
+@model HotelManager.Pages.Auth.LogoutModel
+
+@{
+    ViewData["Title"] = "Deconectare";
+}
+
+<div class="state-layout">
+    <section class="state-card">
+        <span class="eyebrow">CONTUL TĂU</span>
+
+        <h1>Închidem sesiunea?</h1>
+
+        <p class="lead-copy">
+            Te poți autentifica din nou oricând.
+        </p>
+
+        <form method="post"
+              asp-antiforgery="true"
+              data-submit-form>
+
+            <div class="state-actions">
+                <button class="btn btn-primary"
+                        type="submit"
+                        data-submit-button>
+                    Da, deconectează-mă
+                    <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+
+                <a class="btn btn-ghost"
+                   asp-page="/Profile/ViewProfile">
+                    Înapoi la profil
+                </a>
+            </div>
+        </form>
+    </section>
+</div>

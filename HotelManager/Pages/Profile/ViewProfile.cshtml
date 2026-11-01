@@ -1,0 +1,96 @@
+﻿@page
+@model HotelManager.Pages.Profile.ViewProfileModel
+
+@{
+    ViewData["Title"] = "Profilul meu";
+    var staff = User.IsInRole(nameof(Receptionist));
+
+    var initial = string.IsNullOrWhiteSpace(Model.FullName)
+        ? "H"
+        : System.Globalization.StringInfo
+            .GetNextTextElement(Model.FullName.Trim())
+            .ToUpperInvariant();
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">CONTUL TĂU</span>
+        <h1>Profilul meu.</h1>
+
+        <p class="lead-copy">
+            Datele contului tău, într-un singur loc.
+        </p>
+    </div>
+
+    <a class="btn btn-ghost" asp-page="/Index">
+        ← Acasă
+    </a>
+</div>
+
+<div class="profile-layout">
+    <aside class="profile-aside">
+        <div class="profile-avatar" aria-hidden="true">
+            @initial
+        </div>
+
+        <h2>@Model.FullName</h2>
+        <p>@Model.Email</p>
+        <span class="role-badge">@Model.RoleLabel</span>
+    </aside>
+
+    <section class="panel">
+        <h2>Detaliile contului</h2>
+
+        <dl class="profile-grid">
+            <div class="profile-item">
+                <dt>Prenume</dt>
+                <dd>@Model.FirstName</dd>
+            </div>
+
+            <div class="profile-item">
+                <dt>Nume</dt>
+                <dd>@Model.LastName</dd>
+            </div>
+
+            <div class="profile-item profile-item-wide">
+                <dt>Email</dt>
+                <dd>@Model.Email</dd>
+            </div>
+
+            <div class="profile-item">
+                <dt>Tip cont</dt>
+                <dd>@Model.RoleLabel</dd>
+            </div>
+
+            <div class="profile-item">
+                <dt>ID cont</dt>
+                <dd>#@Model.AccountId</dd>
+            </div>
+        </dl>
+
+        <div class="profile-actions">
+            <a class="btn btn-primary"
+               asp-page="/Reservations/Create">
+                Rezervare nouă
+            </a>
+
+            <a class="btn btn-ghost"
+               asp-page="/Reservations/Index">
+                Rezervări
+            </a>
+
+            @if (staff)
+            {
+                <a class="btn btn-ghost"
+                   asp-page="/Reception/Index">
+                    Recepție
+                </a>
+            }
+
+            <a class="btn btn-ghost"
+               asp-page="/Auth/Logout">
+                Deconectare
+            </a>
+        </div>
+    </section>
+</div>

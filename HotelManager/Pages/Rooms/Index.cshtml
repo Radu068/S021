@@ -1,0 +1,311 @@
+@page
+@model HotelManager.Pages.Rooms.IndexModel
+
+@{
+    ViewData["Title"] = "Camere";
+    var money = System.Globalization.CultureInfo.GetCultureInfo("ro-RO");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
+
+<div class="stay-catalog">
+    <div class="module-toolbar stay-heading">
+        <div class="page-heading">
+            <span class="eyebrow">HOTELMANAGER / CAMERE</span>
+
+            <h1>
+                @(Model.All
+                    ? "Inventarul camerelor."
+                    : "Găsește camera potrivită.")
+            </h1>
+
+            <p class="lead-copy">
+                Alege perioada, compară camerele și pregătește următorul sejur.
+            </p>
+        </div>
+
+        @if (Model.IsReceptionist)
+        {
+            <div class="row-actions">
+                <a class="btn btn-ghost"
+                   asp-page="./Index"
+                   asp-route-all="@(!Model.All)">
+                    @(Model.All
+                        ? "Vezi disponibilitatea"
+                        : "Inventar complet")
+                </a>
+
+                <a class="btn btn-primary" asp-page="./Create">
+                    Adaugă cameră
+                </a>
+            </div>
+        }
+    </div>
+
+    <form id="stay-search" method="get" class="stay-search">
+        @if (Model.IsReceptionist)
+        {
+            <input type="hidden"
+                   name="All"
+                   value="@Model.All.ToString().ToLowerInvariant()" />
+        }
+
+        <div class="field">
+            <label asp-for="From" class="form-label">
+                Sosire
+            </label>
+
+            <input asp-for="From"
+                   asp-format="{0:yyyy-MM-dd}"
+                   class="form-control"
+                   min="@(HotelClock.Today.ToString("yyyy-MM-dd"))"
+                   required />
+        </div>
+
+        <div class="field">
+            <label asp-for="To" class="form-label">
+                Plecare
+            </label>
+
+            <input asp-for="To"
+                   asp-format="{0:yyyy-MM-dd}"
+                   class="form-control"
+                   min="@(HotelClock.Today.AddDays(1).ToString("yyyy-MM-dd"))"
+                   required />
+        </div>
+
+        <div class="field">
+            <label asp-for="Beds" class="form-label">
+                Minimum de paturi
+            </label>
+
+            <select asp-for="Beds" class="form-select">
+                @for (int count = 1; count <= 8; count++)
+                {
+                    <option value="@count">@count</option>
+                }
+            </select>
+        </div>
+
+        <div class="field">
+            <label asp-for="Apartment" class="form-label">
+                Tip cameră
+            </label>
+
+            <select asp-for="Apartment" class="form-select">
+                <option value="">Toate tipurile</option>
+                <option value="false">Cameră</option>
+                <option value="true">Apartament</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label asp-for="MaxPrice" class="form-label">
+                Maximum lei / noapte
+            </label>
+
+            <input asp-for="MaxPrice"
+                   type="number"
+                   class="form-control"
+                   min="0.01"
+                   max="99999.99"
+                   step="0.01"
+                   placeholder="Orice tarif" />
+        </div>
+
+        <div class="field">
+            <label asp-for="Sort" class="form-label">
+                Ordonează
+            </label>
+
+            <select asp-for="Sort" class="form-select">
+                <option value="price">Preț crescător</option>
+                <option value="price-desc">Preț descrescător</option>
+                <option value="beds">Mai multe paturi</option>
+            </select>
+        </div>
+
+        <div class="stay-search-actions">
+            <button class="btn btn-primary" type="submit">
+                Caută camere
+            </button>
+
+            <a class="btn btn-ghost"
+               asp-page="./Index"
+               asp-route-all="@Model.All">
+                Resetează
+            </a>
+        </div>
+    </form>
+
+    <div asp-validation-summary="All" role="alert"></div>
+
+    @if (Model.ModelState.IsValid)
+    {
+        <div class="stay-results-heading">
+            <div>
+                <strong>@Model.Items.Count rezultate</strong>
+
+                <span>
+                    @Model.From.ToString("dd.MM.yyyy")
+                    –
+                    @Model.To.ToString("dd.MM.yyyy")
+                </span>
+            </div>
+
+            <span>
+                @Model.Nights
+                @(Model.Nights == 1 ? "noapte" : "nopți")
+            </span>
+        </div>
+
+        <div class="stay-list">
+            @foreach (var room in Model.Items)
+            {
+                var hasPhoto = !string.IsNullOrWhiteSpace(room.ImagePath);
+                var total = room.PricePerNight * Model.Nights;
+
+                var description = string.IsNullOrWhiteSpace(room.Description)
+                    ? room.GetLabel()
+                    : room.Description;
+
+                <article class="stay-card">
+                    <div class="stay-photo">
+                        <div class="stay-photo-empty" aria-hidden="true">
+                            <strong>HotelManager</strong>
+                            <span>Fotografie indisponibilă</span>
+                        </div>
+
+                        @if (hasPhoto)
+                        {
+                            <img src="@Url.Content("~" + room.ImagePath)"
+                                 alt="Interior – @room.GetLabel()"
+                                 width="640"
+                                 height="480"
+                                 loading="lazy"
+                                 decoding="async"
+                                 data-room-image />
+                        }
+
+                        <span class="stay-photo-label">
+                            @(room.IsApartment ? "Apartament" : "Cameră")
+                        </span>
+                    </div>
+
+                    <div class="stay-information">
+                        <span class="stay-hotel">
+                            @room.Hotel.Name
+                        </span>
+
+                        <h2>
+                            @(room.IsApartment ? "Apartament" : "Camera")
+                            @room.RoomNumber
+                        </h2>
+
+                        <div class="stay-tags">
+                            <span>
+                                @room.NumberOfBeds
+                                @(room.NumberOfBeds == 1 ? "pat" : "paturi")
+                            </span>
+
+                            <span>
+                                @(Model.All
+                                    ? "Inventar"
+                                    : "Disponibilă în perioada aleasă")
+                            </span>
+                        </div>
+
+                        <p class="stay-description">
+                            @description
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(room.Description))
+                        {
+                            <details class="stay-details">
+                                <summary>Descriere completă</summary>
+                                <p>@room.Description</p>
+                            </details>
+                        }
+
+                        @if (Model.IsReceptionist)
+                        {
+                            <a class="stay-edit-link"
+                               asp-page="./Edit"
+                               asp-route-id="@room.RoomId">
+                                Editează prezentarea →
+                            </a>
+                        }
+                    </div>
+
+                    <div class="stay-offer">
+                        @if (room.PricePerNight > 0)
+                        {
+                            <span class="stay-rate-label">
+                                Preț pe noapte
+                            </span>
+
+                            <strong class="stay-rate">
+                                @room.PricePerNight.ToString("N2", money)
+                                <small>lei</small>
+                            </strong>
+
+                            <div class="stay-total">
+                                <span>
+                                    Total estimat /
+                                    @Model.Nights
+                                    @(Model.Nights == 1 ? "noapte" : "nopți")
+                                </span>
+
+                                <strong>
+                                    @total.ToString("N2", money) lei
+                                </strong>
+                            </div>
+
+                            <a class="btn btn-primary stay-reserve"
+                               asp-page="/Reservations/Create"
+                               asp-route-roomId="@room.RoomId"
+                               asp-route-checkIn="@(Model.From.ToString("yyyy-MM-dd"))"
+                               asp-route-checkOut="@(Model.To.ToString("yyyy-MM-dd"))">
+                                @(signedIn
+                                    ? "Rezervă camera"
+                                    : "Autentifică-te și rezervă")
+                                →
+                            </a>
+                        }
+                        else
+                        {
+                            <p class="micro-copy">
+                                Tariful nu este completat.
+                            </p>
+
+                            @if (Model.IsReceptionist)
+                            {
+                                <a class="btn btn-primary"
+                                   asp-page="./Edit"
+                                   asp-route-id="@room.RoomId">
+                                    Completează tariful
+                                </a>
+                            }
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (Model.Items.Count == 0)
+        {
+            <section class="panel stay-empty">
+                <span class="eyebrow">NICIUN REZULTAT</span>
+
+                <h2>Încercăm altă perioadă?</h2>
+
+                <p class="micro-copy">
+                    Schimbă datele sau filtrele pentru a vedea alte opțiuni.
+                </p>
+
+                <a class="btn btn-ghost" href="#stay-search">
+                    Modifică selecția
+                </a>
+            </section>
+        }
+    }
+</div>

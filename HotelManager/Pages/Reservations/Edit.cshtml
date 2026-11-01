@@ -1,0 +1,102 @@
+@page "{id:int}"
+@model HotelManager.Pages.Reservations.EditModel
+
+@{
+    ViewData["Title"] = "Editează rezervarea";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">REZERVĂRI</span>
+        <h1>Actualizează sejurul.</h1>
+
+        <p class="lead-copy">
+            Rezervarea #@Model.ReservationId · @Model.GuestName
+        </p>
+    </div>
+
+    <a class="btn btn-ghost"
+       asp-page="./Details"
+       asp-route-id="@Model.ReservationId">
+        ← Înapoi la detalii
+    </a>
+</div>
+
+<section class="panel form-panel">
+    <form method="post"
+          asp-antiforgery="true"
+          data-submit-form>
+
+        <input asp-for="Input.GuestId" type="hidden" />
+        <input asp-for="Input.Version" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly"
+             role="alert"></div>
+
+        <div class="field">
+            <label asp-for="Input.RoomId"
+                   class="form-label"></label>
+
+            <select asp-for="Input.RoomId"
+                    asp-items="Model.RoomOptions"
+                    class="form-select"
+                    required>
+                <option value="">Selectează camera</option>
+            </select>
+
+            <span asp-validation-for="Input.RoomId"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="field">
+                <label asp-for="Input.CheckIn"
+                       class="form-label"></label>
+
+                <input asp-for="Input.CheckIn"
+                       asp-format="{0:yyyy-MM-dd}"
+                       class="form-control"
+                       min="@(HotelClock.Today.ToString("yyyy-MM-dd"))"
+                       required />
+
+                <span asp-validation-for="Input.CheckIn"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Input.CheckOut"
+                       class="form-label"></label>
+
+                <input asp-for="Input.CheckOut"
+                       asp-format="{0:yyyy-MM-dd}"
+                       class="form-control"
+                       min="@(HotelClock.Today.AddDays(1).ToString("yyyy-MM-dd"))"
+                       required />
+
+                <span asp-validation-for="Input.CheckOut"></span>
+            </div>
+        </div>
+
+        <p class="form-text">
+            Disponibilitatea camerei este verificată la salvare.
+        </p>
+
+        <div class="profile-actions">
+            <button class="btn btn-primary"
+                    type="submit"
+                    data-submit-button>
+                Salvează modificările
+                <span class="button-spinner" aria-hidden="true"></span>
+            </button>
+
+            <a class="btn btn-ghost"
+               asp-page="./Details"
+               asp-route-id="@Model.ReservationId">
+                Renunță
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

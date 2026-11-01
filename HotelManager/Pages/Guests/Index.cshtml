@@ -1,0 +1,101 @@
+@page
+@model HotelManager.Pages.Guests.IndexModel
+
+@{
+    ViewData["Title"] = "Oaspeți";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">RECEPȚIE</span>
+        <h1>Oaspeți.</h1>
+
+        <p class="lead-copy">
+            Conturile clienților și datele lor de contact.
+        </p>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="/Reception/Index">
+            ← Recepție
+        </a>
+
+        <a class="btn btn-primary" asp-page="./Create">
+            Adaugă oaspete
+        </a>
+    </div>
+</div>
+
+<form method="get" class="module-filter">
+    <label class="visually-hidden" asp-for="Search">
+        Caută oaspeți
+    </label>
+
+    <input asp-for="Search"
+           class="form-control"
+           placeholder="Nume sau email"
+           maxlength="100" />
+
+    <button class="btn btn-primary" type="submit">
+        Caută
+    </button>
+
+    <a class="btn btn-ghost" asp-page="./Index">
+        Resetează
+    </a>
+</form>
+
+<section class="panel">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Nume</th>
+                    <th scope="col">Email</th>
+                    <th scope="col" class="text-end">Acțiuni</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var guest in Model.Items)
+                {
+                    <tr>
+                        <td>@guest.GetFullName()</td>
+                        <td>@guest.Email</td>
+
+                        <td>
+                            <div class="row-actions">
+                                <a class="btn btn-ghost"
+                                   asp-page="/Reservations/Create"
+                                   asp-route-guestId="@guest.UserId">
+                                    Rezervă
+                                </a>
+
+                                <a class="btn btn-ghost"
+                                   asp-page="./Edit"
+                                   asp-route-id="@guest.UserId">
+                                    Editează
+                                </a>
+
+                                <a class="btn btn-outline-danger"
+                                   asp-page="./Delete"
+                                   asp-route-id="@guest.UserId">
+                                    Șterge
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (Model.Items.Count == 0)
+                {
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            Nu au fost găsiți oaspeți.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

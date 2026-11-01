@@ -1,0 +1,152 @@
+﻿@{
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? "/Index";
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var staff = signedIn && User.IsInRole(nameof(Receptionist));
+    var name = User.Identity?.Name ?? "Contul meu";
+
+    bool Active(string section) =>
+        section == "/Index"
+            ? page.Equals(section, StringComparison.OrdinalIgnoreCase)
+            : page.StartsWith(section + "/", StringComparison.OrdinalIgnoreCase);
+}
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <meta name="theme-color" content="#4f46e5" />
+
+    <title>@ViewData["Title"] · HotelManager</title>
+
+    <link rel="icon" href="~/favicon.ico" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap-reboot.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+</head>
+<body>
+    <a class="visually-hidden" href="#main-content">
+        Sari la conținut
+    </a>
+
+    <header class="site-header" data-header>
+        <div class="content-width">
+            <nav class="navbar" aria-label="Navigare principală">
+                <a class="brand" asp-page="/Index">
+                    <span class="brand-mark" aria-hidden="true">H</span>
+                    HotelManager
+                </a>
+
+                <div class="nav-links">
+                    <a class="nav-link @(Active("/Index") ? "is-current" : null)"
+                       asp-page="/Index">
+                        Acasă
+                    </a>
+
+                    <a class="nav-link @(Active("/Rooms") ? "is-current" : null)"
+                       asp-page="/Rooms/Index">
+                        Camere
+                    </a>
+
+                    @if (signedIn)
+                    {
+                        @if (staff)
+                        {
+                            <a class="nav-link @(Active("/Reception") ? "is-current" : null)"
+                               asp-page="/Reception/Index">
+                                Recepție
+                            </a>
+                        }
+
+                        <a class="nav-link @(Active("/Reservations") ? "is-current" : null)"
+                           asp-page="/Reservations/Index">
+                            Rezervări
+                        </a>
+
+                        @if (staff)
+                        {
+                            <a class="nav-link @(Active("/Guests") ? "is-current" : null)"
+                               asp-page="/Guests/Index">
+                                Oaspeți
+                            </a>
+                        }
+                    }
+                </div>
+
+                <div class="nav-actions">
+                    @if (signedIn)
+                    {
+                        <a class="nav-link @(Active("/Profile") ? "is-current" : null)"
+                           asp-page="/Profile/ViewProfile"
+                           title="@name">
+                            Profilul meu
+                        </a>
+
+                        <a class="btn btn-ghost"
+                           asp-page="/Auth/Logout">
+                            Deconectare
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-ghost"
+                           asp-page="/Auth/Login">
+                            Autentificare
+                        </a>
+
+                        <a class="btn btn-primary"
+                           asp-page="/Auth/Register">
+                            Creează cont
+                        </a>
+                    }
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content"
+          class="app-main content-width"
+          tabindex="-1">
+
+        @if (TempData["SuccessMessage"] is string message)
+        {
+            <div class="notice notice-success"
+                 role="status"
+                 data-notice>
+
+                <p style="margin:0;">@message</p>
+
+                <button class="notice-close"
+                        type="button"
+                        data-dismiss-notice
+                        aria-label="Închide mesajul">
+                    &times;
+                </button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer content-width">
+        <p>&copy; @HotelClock.Today.Year HotelManager</p>
+
+        <div class="footer-links">
+            <a asp-page="/Index">Acasă</a>
+            <a href="#main-content">Înapoi sus &uarr;</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

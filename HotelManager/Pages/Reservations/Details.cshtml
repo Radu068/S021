@@ -1,0 +1,168 @@
+@page "{id:int}"
+@model HotelManager.Pages.Reservations.DetailsModel
+
+@{
+    ViewData["Title"] = $"Rezervarea #{Model.Item.ReservationId}";
+}
+
+<div class="module-toolbar">
+    <div class="page-heading">
+        <span class="eyebrow">REZERVĂRI</span>
+
+        <h1>Rezervarea #@Model.Item.ReservationId</h1>
+
+        <span class="reservation-status status-@((int)Model.Item.Status)">
+            @Model.Item.Status.GetLabel()
+        </span>
+    </div>
+
+    <div class="row-actions">
+        <a class="btn btn-ghost" asp-page="./Index">
+            ← Lista rezervărilor
+        </a>
+
+        @if (Model.IsReceptionist)
+        {
+            <a class="btn btn-ghost" asp-page="/Reception/Index">
+                Recepție
+            </a>
+        }
+    </div>
+</div>
+
+<section class="panel">
+    <div asp-validation-summary="ModelOnly"
+         role="alert"></div>
+
+    <dl class="profile-grid">
+        <div class="profile-item">
+            <dt>Oaspete</dt>
+            <dd>@Model.Item.Guest.GetFullName()</dd>
+        </div>
+
+        <div class="profile-item">
+            <dt>Email</dt>
+            <dd>@Model.Item.Guest.Email</dd>
+        </div>
+
+        <div class="profile-item">
+            <dt>Cameră</dt>
+            <dd>@Model.Item.Room.GetLabel()</dd>
+        </div>
+
+        <div class="profile-item">
+            <dt>Nopți</dt>
+            <dd>@((Model.Item.CheckOut - Model.Item.CheckIn).Days)</dd>
+        </div>
+
+        <div class="profile-item">
+            <dt>Sosire</dt>
+            <dd>@Model.Item.CheckIn.ToString("dd.MM.yyyy")</dd>
+        </div>
+
+        <div class="profile-item">
+            <dt>Plecare</dt>
+            <dd>@Model.Item.CheckOut.ToString("dd.MM.yyyy")</dd>
+        </div>
+
+        @if (Model.Item.ActualCheckInUtc.HasValue)
+        {
+            <div class="profile-item">
+                <dt>Check-in efectuat</dt>
+                <dd>
+                    @HotelClock.LocalTime(Model.Item.ActualCheckInUtc.Value).ToString("dd.MM.yyyy HH:mm")
+                </dd>
+            </div>
+        }
+
+        @if (Model.Item.ActualCheckOutUtc.HasValue)
+        {
+            <div class="profile-item">
+                <dt>Check-out efectuat</dt>
+                <dd>
+                    @HotelClock.LocalTime(Model.Item.ActualCheckOutUtc.Value).ToString("dd.MM.yyyy HH:mm")
+                </dd>
+            </div>
+        }
+    </dl>
+
+    <div class="profile-actions">
+        @if (Model.CanEdit)
+        {
+            <a class="btn btn-ghost"
+               asp-page="./Edit"
+               asp-route-id="@Model.Item.ReservationId">
+                Editează rezervarea
+            </a>
+
+            <form method="post"
+                  asp-page-handler="Cancel"
+                  asp-route-id="@Model.Item.ReservationId"
+                  asp-antiforgery="true"
+                  data-submit-form>
+
+                <input type="hidden"
+                       name="version"
+                       value="@Model.Item.Version" />
+
+                <button class="btn btn-outline-danger"
+                        type="submit"
+                        data-submit-button>
+                    Anulează rezervarea
+                    <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+        }
+
+        @if (Model.CanCheckIn)
+        {
+            <form method="post"
+                  asp-page-handler="CheckIn"
+                  asp-route-id="@Model.Item.ReservationId"
+                  asp-antiforgery="true"
+                  data-submit-form>
+
+                <input type="hidden"
+                       name="version"
+                       value="@Model.Item.Version" />
+
+                <button class="btn btn-primary"
+                        type="submit"
+                        data-submit-button>
+                    Efectuează check-in
+                    <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+        }
+
+        @if (Model.CanCheckOut)
+        {
+            <form method="post"
+                  asp-page-handler="CheckOut"
+                  asp-route-id="@Model.Item.ReservationId"
+                  asp-antiforgery="true"
+                  data-submit-form>
+
+                <input type="hidden"
+                       name="version"
+                       value="@Model.Item.Version" />
+
+                <button class="btn btn-primary"
+                        type="submit"
+                        data-submit-button>
+                    Efectuează check-out
+                    <span class="button-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+        }
+
+        @if (Model.IsReceptionist)
+        {
+            <a class="btn btn-ghost"
+               asp-page="/Guests/Edit"
+               asp-route-id="@Model.Item.GuestId">
+                Datele oaspetelui
+            </a>
+        }
+    </div>
+</section>
